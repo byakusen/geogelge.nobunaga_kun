@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>信長くん 〜戦国ものしり問答〜</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yuji+Syuku&family=Zen+Maru+Gothic:wght@500;700;900&family=Klee+One:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sumi:#1a1410;       /* 墨 */
+    --sumi2:#241c15;
+    --kin:#d9a441;        /* 金 */
+    --kin-akarui:#f2cd6b;
+    --aka:#b03a2e;        /* 朱 */
+    --aka-fuka:#7d241c;
+    --washi:#f4ead6;      /* 和紙 */
+    --washi-kage:#e7d8ba;
+    --midori:#5c7a4a;
+    --sumi-usu:rgba(244,234,214,.7);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    font-family:'Zen Maru Gothic',sans-serif;
+    background:
+      radial-gradient(ellipse at 50% -10%, #3a2c1d 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 120%, #2a1d12 0%, transparent 55%),
+      var(--sumi);
+    color:var(--washi);
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    overflow-x:hidden;
+    position:relative;
+  }
+  /* 和紙テクスチャ風のノイズ */
+  body::before{
+    content:"";
+    position:fixed;inset:0;
+    background-image:
+      repeating-linear-gradient(0deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px);
+    pointer-events:none;z-index:0;
+  }
+
+  /* ヘッダー（のぼり旗風） */
+  header{
+    position:relative;z-index:2;
+    text-align:center;
+    padding:18px 16px 10px;
+    border-bottom:3px solid var(--kin);
+    background:linear-gradient(180deg, rgba(125,36,28,.35), transparent);
+  }
+  .mon{
+    display:inline-flex;align-items:center;gap:14px;
+  }
+  .mon-maru{
+    width:46px;height:46px;border-radius:50%;
+    border:3px solid var(--kin);
+    display:grid;place-items:center;
+    font-family:'Yuji Syuku',serif;font-size:24px;color:var(--kin-akarui);
+    background:radial-gradient(circle,#3a2c1d,#1a1410);
+  }
+  h1{
+    font-family:'Yuji Syuku',serif;
+    font-size:clamp(28px,4.2vw,52px);
+    color:var(--kin-akarui);
+    letter-spacing:.12em;
+    text-shadow:0 2px 0 #000,0 0 18px rgba(217,164,65,.35);
+  }
+  .sub{
+    font-size:clamp(13px,1.5vw,18px);
+    color:var(--sumi-usu);
+    margin-top:4px;letter-spacing:.18em;
+  }
+
+  /* メイン舞台 */
+  main{
+    position:relative;z-index:2;
+    flex:1;
+    width:min(1100px,94vw);
+    margin:0 auto;
+    padding:22px 0 30px;
+    display:flex;flex-direction:column;gap:20px;
+  }
+
+  /* 信長の語り場 */
+  .stage{
+    display:flex;align-items:flex-start;gap:22px;
+  }
+  .nobunaga{
+    flex:0 0 auto;
+    width:clamp(120px,15vw,180px);
+    text-align:center;
+  }
+  .face{
+    width:clamp(120px,15vw,180px);
+    height:clamp(120px,15vw,180px);
+    border-radius:50%;
+    overflow:hidden;
+    background:#241c15;
+    border:5px solid var(--kin);
+    box-shadow:0 0 0 4px var(--sumi),0 10px 30px rgba(0,0,0,.5);
+    position:relative;
+    transition:transform .25s;
+  }
+  .face img{
+    width:100%;height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .face-fallback{
+    display:none;
+    width:100%;height:100%;
+    align-items:center;justify-content:center;
+    font-family:'Yuji Syuku',serif;
+    font-size:clamp(20px,2.6vw,32px);line-height:1.15;
+    color:var(--kin-akarui);letter-spacing:.05em;
+    background:radial-gradient(circle at 50% 38%, #3a2c1d, #1a1410);
+  }
+  .face.no-img .face-fallback{display:flex;}
+  .face.talk{animation:nod .6s ease;}
+  @keyframes nod{0%,100%{transform:translateY(0)}30%{transform:translateY(6px) rotate(-2deg)}60%{transform:translateY(0) rotate(2deg)}}
+  .name-tag{
+    margin-top:10px;font-family:'Yuji Syuku',serif;
+    font-size:clamp(16px,2vw,24px);color:var(--kin-akarui);letter-spacing:.1em;
+  }
+
+  /* 吹き出し（巻物風） */
+  .scroll{
+    flex:1;position:relative;
+    background:linear-gradient(180deg,var(--washi),var(--washi-kage));
+    color:var(--sumi);
+    border-radius:14px;
+    padding:26px 30px;
+    min-height:170px;
+    box-shadow:0 12px 34px rgba(0,0,0,.45),inset 0 0 0 3px rgba(125,36,28,.25);
+    border:2px solid var(--kin);
+  }
+  .scroll::before{ /* 吹き出しのしっぽ */
+    content:"";position:absolute;left:-18px;top:48px;
+    border-style:solid;border-width:14px 18px 14px 0;
+    border-color:transparent var(--kin) transparent transparent;
+  }
+  .scroll .answer{
+    font-family:'Klee One',serif;
+    font-size:clamp(20px,2.6vw,32px);
+    line-height:1.75;font-weight:600;
+    letter-spacing:.02em;
+  }
+  .scroll .answer .em{color:var(--aka-fuka);font-weight:700;}
+  .cursor{display:inline-block;width:.5em;background:var(--aka);animation:blink .7s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0}}
+
+  /* 質問エリア */
+  .ask-zone{
+    background:rgba(36,28,21,.7);
+    border:2px solid var(--kin);
+    border-radius:14px;
+    padding:18px 20px;
+  }
+  .ask-zone .label{
+    font-size:clamp(15px,1.7vw,20px);color:var(--kin-akarui);
+    margin-bottom:12px;letter-spacing:.1em;font-weight:700;
+  }
+  .input-row{display:flex;gap:12px;flex-wrap:wrap;}
+  #q{
+    flex:1;min-width:220px;
+    font-family:'Zen Maru Gothic',sans-serif;
+    font-size:clamp(18px,2.2vw,26px);font-weight:500;
+    padding:14px 18px;border-radius:10px;border:none;
+    background:var(--washi);color:var(--sumi);
+  }
+  #q:focus{outline:3px solid var(--kin-akarui);}
+  .btn-ask{
+    font-family:'Yuji Syuku',serif;
+    font-size:clamp(18px,2.2vw,26px);
+    padding:14px 28px;border:none;border-radius:10px;cursor:pointer;
+    background:linear-gradient(180deg,var(--aka),var(--aka-fuka));
+    color:var(--washi);letter-spacing:.1em;
+    box-shadow:0 4px 0 #511712,0 6px 14px rgba(0,0,0,.4);
+    transition:transform .08s;
+  }
+  .btn-ask:active{transform:translateY(4px);box-shadow:0 1px 0 #511712;}
+
+  /* おすすめ問い */
+  .topics{margin-top:8px;}
+  .topics .t-label{font-size:clamp(13px,1.5vw,17px);color:var(--sumi-usu);margin:6px 2px 12px;letter-spacing:.08em;}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;}
+  .chip{
+    font-family:'Zen Maru Gothic',sans-serif;font-weight:700;
+    font-size:clamp(15px,1.8vw,21px);
+    padding:11px 18px;border-radius:999px;cursor:pointer;
+    background:rgba(244,234,214,.08);
+    color:var(--washi);
+    border:2px solid var(--kin);
+    transition:all .15s;
+  }
+  .chip:hover{background:var(--kin);color:var(--sumi);transform:translateY(-2px);}
+
+  /* ===== モード切り替え（のれん風タブ） ===== */
+  .mode-bar{
+    display:flex;justify-content:center;gap:10px;flex-wrap:wrap;
+  }
+  .mode-btn{
+    font-family:'Yuji Syuku',serif;
+    font-size:clamp(16px,2vw,24px);letter-spacing:.12em;
+    padding:10px 26px;border-radius:10px 10px 0 0;cursor:pointer;
+    background:rgba(36,28,21,.55);
+    color:var(--sumi-usu);
+    border:2px solid rgba(217,164,65,.35);border-bottom:none;
+    transition:all .15s;
+  }
+  .mode-btn:hover{color:var(--kin-akarui);}
+  .mode-btn.active{
+    background:linear-gradient(180deg,var(--aka),var(--aka-fuka));
+    color:var(--washi);border-color:var(--kin);
+    box-shadow:0 -3px 12px rgba(176,58,46,.4);
+  }
+
+  .panel{display:none;}
+  .panel.show{display:block;}
+
+  /* 顔のリアクション */
+  .face.seikai{animation:nod .6s ease;box-shadow:0 0 0 4px var(--sumi),0 0 34px 6px rgba(217,164,65,.85),0 10px 30px rgba(0,0,0,.5);}
+  .face.zannen{animation:shake .5s ease;}
+  @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px) rotate(-2deg)}40%{transform:translateX(7px) rotate(2deg)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+
+  /* ===== クイズ ===== */
+  .quiz-head{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    margin-bottom:14px;flex-wrap:wrap;
+  }
+  .quiz-count{font-family:'Yuji Syuku',serif;font-size:clamp(15px,1.8vw,22px);color:var(--kin-akarui);letter-spacing:.08em;}
+  .quiz-score{font-size:clamp(15px,1.8vw,22px);color:var(--washi);font-weight:700;}
+  .quiz-score b{color:var(--kin-akarui);}
+  .choices{display:flex;flex-direction:column;gap:12px;}
+  .choice{
+    font-family:'Zen Maru Gothic',sans-serif;font-weight:700;
+    font-size:clamp(18px,2.3vw,28px);text-align:left;
+    padding:16px 22px;border-radius:12px;cursor:pointer;
+    background:var(--washi);color:var(--sumi);
+    border:3px solid var(--kin);
+    box-shadow:0 4px 0 rgba(125,36,28,.35);
+    transition:transform .08s,background .15s;
+  }
+  .choice:hover{background:var(--kin-akarui);transform:translateY(-2px);}
+  .choice:disabled{cursor:default;opacity:.92;transform:none;}
+  .choice.correct{background:#5c7a4a;color:#fff;border-color:#7fae66;}
+  .choice.wrong{background:#9c4a40;color:#fff;border-color:#c46a5e;}
+  .choice .mark{font-family:'Yuji Syuku',serif;margin-right:.4em;color:var(--aka-fuka);}
+  .choice.correct .mark,.choice.wrong .mark{color:#fff;}
+  .quiz-next{
+    margin-top:16px;display:none;width:100%;
+    font-family:'Yuji Syuku',serif;font-size:clamp(18px,2.2vw,26px);
+    padding:14px;border:none;border-radius:10px;cursor:pointer;
+    background:linear-gradient(180deg,var(--kin),#b8852f);color:var(--sumi);
+    letter-spacing:.12em;box-shadow:0 4px 0 #7a5512;
+  }
+  .quiz-next:active{transform:translateY(4px);box-shadow:0 1px 0 #7a5512;}
+  .quiz-next.show{display:block;}
+
+  /* ===== 年表 ===== */
+  .tl-label{font-size:clamp(15px,1.7vw,20px);color:var(--kin-akarui);margin-bottom:14px;letter-spacing:.1em;font-weight:700;}
+  .timeline{
+    display:flex;gap:14px;overflow-x:auto;padding:6px 2px 16px;
+    scroll-snap-type:x proximity;
+  }
+  .timeline::-webkit-scrollbar{height:10px;}
+  .timeline::-webkit-scrollbar-thumb{background:var(--kin);border-radius:999px;}
+  .tl-item{
+    flex:0 0 auto;width:clamp(150px,18vw,200px);
+    scroll-snap-align:start;cursor:pointer;
+    background:linear-gradient(180deg,var(--washi),var(--washi-kage));
+    color:var(--sumi);border:2px solid var(--kin);border-radius:12px;
+    padding:14px 14px 16px;text-align:center;
+    box-shadow:0 6px 16px rgba(0,0,0,.35);
+    transition:transform .12s,box-shadow .12s;position:relative;
+  }
+  .tl-item::after{
+    content:"";position:absolute;right:-15px;top:50%;width:14px;height:3px;
+    background:var(--kin);
+  }
+  .tl-item:last-child::after{display:none;}
+  .tl-item:hover{transform:translateY(-4px);box-shadow:0 10px 22px rgba(0,0,0,.5);}
+  .tl-item.active{outline:4px solid var(--kin-akarui);}
+  .tl-year{
+    font-family:'Yuji Syuku',serif;font-size:clamp(22px,2.6vw,32px);
+    color:var(--aka-fuka);letter-spacing:.04em;
+  }
+  .tl-age{font-size:clamp(12px,1.3vw,15px);color:#6b5a3d;margin:2px 0 8px;}
+  .tl-title{font-family:'Zen Maru Gothic',sans-serif;font-weight:700;font-size:clamp(15px,1.7vw,20px);line-height:1.4;}
+
+  footer{
+    position:relative;z-index:2;text-align:center;
+    font-size:13px;color:rgba(244,234,214,.4);
+    padding:14px;letter-spacing:.1em;
+  }
+  @media(max-width:560px){
+    .stage{flex-direction:column;align-items:center;}
+    .scroll::before{display:none;}
+    .nobunaga{order:-1;}
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="mon">
+      <span class="mon-maru">織</span>
+      <div>
+        <h1>信長くん</h1>
+        <div class="sub">せんごく ものしり もんどう</div>
+      </div>
+      <span class="mon-maru">田</span>
+    </div>
+  </header>
+
+  <main>
+    <div class="mode-bar">
+      <button class="mode-btn active" data-mode="qa">もんどう</button>
+      <button class="mode-btn" data-mode="quiz">信長クイズ</button>
+      <button class="mode-btn" data-mode="timeline">年表</button>
+    </div>
+
+    <div class="stage">
+      <div class="nobunaga">
+        <div class="face" id="face">
+          <img src="https://raw.githubusercontent.com/byakusen/gogelgege.nobunaga/main/nobunaga2.png" alt="織田信長"
+               onerror="this.style.display='none';this.parentNode.classList.add('no-img');">
+          <span class="face-fallback">織<br>田<br>信<br>長</span>
+        </div>
+        <div class="name-tag">織田信長</div>
+      </div>
+      <div class="scroll">
+        <div class="answer" id="answer"></div>
+      </div>
+    </div>
+
+    <div class="panel show" id="panel-qa">
+      <div class="ask-zone">
+        <div class="label">▼ 信長くんに きいてみよう</div>
+        <div class="input-row">
+          <input id="q" type="text" placeholder="しつもんを 入力してね（れい：本能寺の変ってなに？）" autocomplete="off">
+          <button class="btn-ask" id="askBtn">きく</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-quiz">
+      <div class="ask-zone">
+        <div class="quiz-head">
+          <span class="quiz-count" id="quizCount">第1問</span>
+          <span class="quiz-score">正解 <b id="quizRight">0</b> / <span id="quizDone">0</span>問</span>
+        </div>
+        <div class="choices" id="choices"></div>
+        <button class="quiz-next" id="quizNext">つぎの問題へ ▶</button>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-timeline">
+      <div class="ask-zone">
+        <div class="tl-label">▼ 年表の札をタップすると、信長がそのできごとを語るぞ</div>
+        <div class="timeline" id="timeline"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer>クラスで楽しむ 戦国もんどうアプリ／答えは小学生むけにやさしくまとめています</footer>
+
+<script>
+// ===== 信長の知識（小学4年生むけ・信長口調） =====
+// キーワードに当てはまる問いが来たら、その答えを返す。
+const KB = [
+  // ===== 生い立ち・名前 =====
+  {
+    keys:["生まれ","うまれ","いつ生","何年生","誕生","勝幡","しょばた","どこで生"],
+    a:"わしが生まれたのは1534年、尾張国(いまの愛知県)じゃ。生まれた場所は勝幡城(しょばたじょう)という説が今では有力とされておる。父は織田信秀、母は土田御前(どたごぜん)。織田家のあとつぎとして、この世に生をうけたのよ。"
+  },
+  {
+    keys:["幼名","ようみょう","吉法師","きっぽうし","名前","なまえ","名のり","上総介","三郎"],
+    a:"子どものころの名は「吉法師(きっぽうし)」じゃ。1546年に元服して「織田三郎信長」と名のり、のちに「上総介(かずさのすけ)信長」とも名のった。武将は折々に名を変えるものでな。今みなが知る「織田信長」は、わしの一生をあらわす名となったわけよ。"
+  },
+  {
+    keys:["うつけ","おばか","変わった","へんな","かっこう","格好","若いころ","わかいころ","奇行"],
+    a:"若いころのわしは、変わったかっこうで町を歩き、栗や柿をかじりながら出歩いた。まわりは「大うつけ(大ばか者)」とよんだものよ。父の葬儀では位牌に抹香(まっこう)を投げつけたとも伝わる。じゃがそれは、悲しみや、古いしきたりへの思いのあらわれだったのかもしれぬのう。"
+  },
+  {
+    keys:["子ども時代","こどものころ","小さいころ","少年","しょうねん","幼い"],
+    a:"小さいころのわしは、なかなかのいたずらっ子でな。馬を乗りまわし、川で泳ぎ、弓や鉄砲のけいこにはげんだ。学問よりも体を動かすほうが好きであった。型にはまらぬその気性が、のちに古いしきたりを変える力になったのじゃ。"
+  },
+  // ===== 家族 =====
+  {
+    keys:["父","ちち","おとう","信秀","のぶひで"],
+    a:"わしの父は織田信秀(のぶひで)じゃ。尾張で勢いをのばした武将で、商売のさかんな港町をおさえ、力をたくわえた。わしはその父からあとつぎの座を受けついだ。父のきずいた土台があったからこそ、わしは天下への一歩をふみ出せたのよ。"
+  },
+  {
+    keys:["母","はは","おかあ","土田","どた","つちだ"],
+    a:"わしの母は土田御前(どたごぜん)じゃ。じつは母は、わしより弟の信勝(信行)をかわいがっていたとも伝わる。あとつぎ争いで弟を討たねばならなくなったとき、母は弟を助けてほしいと願うた。母の気持ちを思うと、いまも胸がいたむ話よ。"
+  },
+  {
+    keys:["弟","おとうと","信勝","信行","のぶかつ","稲生","いのう"],
+    a:"わしの弟、信勝(信行)とは、織田家のあとつぎをめぐって争うことになった。稲生(いのう)の戦いでわしが勝ち、一度は母のとりなしでゆるした。じゃが、ふたたびそむこうとしたため、ついにこれを討たねばならなんだ。家を一つにまとめるための、つらい決断であった。"
+  },
+  {
+    keys:["濃姫","のうひめ","妻","つま","お嫁","正室","帰蝶"],
+    a:"わしの妻は、美濃の斎藤道三の娘・濃姫(のうひめ)じゃ。家どうしが手を結ぶための結婚(政略結婚)であった。じつのところ、二人がどんな夫婦であったかをくわしく伝える記録は、ほとんど残っておらぬ。歴史には、わからぬことも多いのじゃ。"
+  },
+  {
+    keys:["妹","いもうと","お市","おいち","浅井に嫁"],
+    a:"わしの妹、お市(おいち)じゃ。北近江の浅井長政のもとへ嫁がせ、家どうしのつながりとした。じゃが長政がわしに敵対し、二人は敵味方に分かれてしまう。長政がほろびたあと、お市は救い出された。戦国の世のさだめとはいえ、せつない話よ。"
+  },
+  {
+    keys:["三姉妹","茶々","初","江","ちゃちゃ","お市の娘","姪","めい"],
+    a:"妹お市には、茶々(ちゃちゃ)・初(はつ)・江(ごう)という三人の娘がおった。わしの姪(めい)たちじゃ。この三姉妹は、のちの世で大きな役割をはたすことになる。とくに茶々は豊臣秀吉の妻となり、歴史を動かしていくのじゃ。"
+  },
+  {
+    keys:["息子","むすこ","子ども","こども","信忠","のぶただ","あとつぎの子"],
+    a:"わしには多くの子がおった。あとつぎとさだめたのは長男の信忠(のぶただ)じゃ。若くして戦に出し、いくさを学ばせた。じゃが本能寺の変のとき、信忠も京都で明智の軍にかこまれ、命を落としてしもうた。親より先に子を失う――これほどつらいことはない。"
+  },
+  {
+    keys:["信雄","のぶかつ次男","信孝","のぶたか","次男","三男"],
+    a:"わしの子らは各地におくり、力をのばさせた。次男の信雄(のぶかつ)は伊勢の北畠家へ、三男の信孝(のぶたか)は神戸家へ養子に出した。子らを名家のあとつぎにすえることで、その土地をおさめさせたのじゃ。これも勢いを広げるための一手であった。"
+  },
+  // ===== 尾張統一・初期の戦い =====
+  {
+    keys:["家督","かとく","あとつぎ","跡継","継いだ"],
+    a:"父・信秀が亡くなり、わしは若くして織田家のあとつぎ(家督)を継いだ。じゃが、まわりは敵だらけ。同じ織田一族の中にも、弟にも、わしを認めぬ者がいた。まずは身うちのごたごたをおさめることから、わしの戦いは始まったのよ。"
+  },
+  {
+    keys:["尾張統一","尾張をまとめ","おわり統一","岩倉","犬山","清洲"],
+    a:"わしは弟や、対立する織田一族の家を次々におさえ、1565年ごろに尾張国(いまの愛知県西部)をひとつにまとめあげた。清洲城を手に入れ、本拠とした時期もある。まず足もとをしっかり固める――これが天下への第一歩じゃ。"
+  },
+  {
+    keys:["平手","ひらて","政秀","まさひで","守り役","もり役","いさめ"],
+    a:"平手政秀(ひらてまさひで)は、わしを小さいころから育ててくれた家臣じゃ。うつけ者とよばれ勝手にふるまうわしを案じ、命をかけていさめたとも伝わる。政秀を失うたとき、わしは深く悲しみ、政秀寺という寺を建ててその霊をとむらった。"
+  },
+  {
+    keys:["桶狭間","おけはざま","今川","いまがわ","義元","よしもと","大軍"],
+    a:"桶狭間の戦い(1560年)じゃ。今川義元が、わしの何倍もの大軍をひきいて尾張にせめてきた。だれもがわしの負けと思うた。じゃがわしは『敦盛』を舞うてから出陣し、油断していた義元の本陣にいっきにせめこんで討ち取った。数の多さより、すばやさと作戦よ。"
+  },
+  {
+    keys:["桶狭間なぜ勝","少ない兵","奇襲","きしゅう","作戦"],
+    a:"桶狭間でなぜ勝てたか。今川の大軍は、勝ちをたしかと思いこんで油断しておった。わしはその一点をつき、雨にまぎれて義元のいる本陣だけをねらい、いっきにせめこんだ。まともにぶつかれば負ける。ならば相手の心のすきをつく――それが勝因よ。"
+  },
+  {
+    keys:["家康","いえやす","徳川","とくがわ","清洲同盟","松平"],
+    a:"徳川家康(とくがわいえやす)とは、桶狭間のあと手を結んだ(清洲同盟)。家康は三河の領主で、がまん強くしんぼうのきく男よ。長く同盟をたもち、わしが本能寺でたおれたあと、秀吉の世をへて、最後に天下をおさめ江戸幕府をひらいたのがこの家康じゃ。"
+  },
+  // ===== 美濃・上洛 =====
+  {
+    keys:["美濃","みの","稲葉山","いなばやま","岐阜","ぎふ","斎藤龍興"],
+    a:"美濃(いまの岐阜県)の斎藤氏をやぶり、稲葉山城を手に入れたのが1567年じゃ。わしはこの町を「岐阜(ぎふ)」と名づけ、あらたな本拠地とした。尾張と美濃、二つの国をもつ大きな大名となり、いよいよ天下へと歩みを進めたのよ。"
+  },
+  {
+    keys:["天下布武","てんかふぶ","印","はんこ","朱印"],
+    a:"わしが使うた印(はんこ)に「天下布武(てんかふぶ)」とある。武の力で世の中の争いをおさめ、ひとつのまとまった世をつくる――その願いをこめた言葉じゃ。美濃を手に入れたころから、わしはこの印を使いはじめたのよ。"
+  },
+  {
+    keys:["天下統一","統一","とういつ","ゆめ","目標","もくひょう","やりたかった","目ざし"],
+    a:"わしが目ざしたのは、戦さの絶えぬ世を一つにまとめ、人々が安心してくらせる世をつくることじゃ。そのために古いしきたりを変え、新しいやり方を取り入れた。わしの代では成しとげられなんだが、その道すじは秀吉、家康へと受けつがれていったのよ。"
+  },
+  {
+    keys:["麒麟","きりん","花押","かおう","サイン"],
+    a:"わしは一時期、「麒麟(きりん)」の「麟」の字をかたどった花押(かおう、武将のサイン)を使うておった。麒麟とは、世がよくおさまり平和になったときにあらわれるという、めでたい想像上の生きものよ。わしの「世を一つにまとめたい」という願いが、そこにこめられておった。"
+  },
+  {
+    keys:["足利","あしかが","義昭","よしあき","将軍にした","上洛","じょうらく"],
+    a:"室町幕府の将軍となるべき足利義昭(あしかがよしあき)をたすけ、わしは京都へのぼった(上洛)。1568年、義昭を将軍の座につけたのじゃ。はじめは将軍をもり立て、世をおさめようとした。じゃが、これがのちに大きな対立の種となっていく……。"
+  },
+  {
+    keys:["義昭と対立","将軍と対立","殿中御掟","でんちゅう","掟","おきて"],
+    a:"将軍・足利義昭とは、しだいに考えがあわなくなっていった。わしは将軍の力を一定のわくの中におさめるため、守るべききまり(殿中御掟)を出した。世をきちんとおさめるには、将軍とて好き勝手はゆるされぬ――そう考えたのじゃ。"
+  },
+  {
+    keys:["室町幕府","幕府の終わり","幕府ほろ","幕府滅","義昭追放","将軍を追","終わらせ"],
+    a:"一度は将軍として立てた足利義昭が、わしに敵対するようになった。そこで1573年、ついに義昭を京都から追い出した。これにより、長くつづいた室町幕府は事実上おわった、と言われておる。とはいえ義昭はそのあとも各地で動いており、ものごとはそう単純ではないのじゃ。"
+  },
+  // ===== 信長包囲網・各地の戦い =====
+  {
+    keys:["金ヶ崎","かねがさき","退き口","のきぐち","逃げ","にげ"],
+    a:"1570年、わしは越前の朝倉氏をせめたが、同盟していたはずの浅井長政が裏切り、はさみ撃ちにされかけた。あやういところを、秀吉や光秀が後ろを守り、なんとか京へ逃げのびた(金ヶ崎の退き口)。武将とて、逃げるべきときは逃げる。それも兵法よ。"
+  },
+  {
+    keys:["姉川","あねがわ","浅井","あさい","あざい","長政","朝倉と浅井"],
+    a:"姉川の戦い(1570年)じゃな。わしに敵対した朝倉氏と浅井氏を、徳川家康とともにやぶった。浅井長政は、わしの妹お市を嫁にやった相手であったが、それでも敵となれば戦わねばならぬ。これも戦国の世の、つらいところよ。"
+  },
+  {
+    keys:["朝倉","あさくら","浅井ほろ","あさいほろ","ほろぼした"],
+    a:"わしに従わぬ越前の朝倉氏、北近江の浅井氏とは長く争うた。一度は裏切られあやうい目にもあったが、1573年、ついに両家をほろぼした。敵対する勢力を一つずつおさえ、天下への道を切りひらいていったのじゃ。"
+  },
+  {
+    keys:["延暦寺","比叡山","ひえいざん","焼き討ち","やきうち","お寺","ひどい","むごい"],
+    a:"比叡山の焼き討ち(1571年)のことか……これは今でも「むごい」と言われるおこないじゃ。寺が敵に味方し、わしに刃向かったゆえとはいえ、多くの命がうしなわれた。歴史には、強さの裏でこうした悲しいできごともある。よいことも、おそろしいことも、ありのまま学ぶことが大切じゃ。"
+  },
+  {
+    keys:["信長包囲網","ほういもう","囲まれ","敵だらけ","ピンチ","苦しい"],
+    a:"わしは何度も、多くの敵に同時に囲まれ、あやうい目にあった(信長包囲網)。将軍、朝倉、浅井、武田、本願寺……あちらこちらが手を結び、わしを討とうとしたのじゃ。じゃが、一つひとつ、和議とちからでこれをのりこえた。あきらめぬことが、何より大事よ。"
+  },
+  {
+    keys:["三方ヶ原","みかたがはら","信玄に負け","武田信玄","しんげん","負けた"],
+    a:"三方ヶ原の戦い(1572年)では、わしと家康の軍が、あの武田信玄(たけだしんげん)に大敗した。信玄は、わしが最も手ごわいと思うた相手の一人よ。じゃがその信玄も、まもなく病でこの世を去った。強敵の死は、わしにとって大きな転機となったのじゃ。"
+  },
+  {
+    keys:["鉄砲","てっぽう","長篠","ながしの","武田","勝頼","かつより","さく","三段"],
+    a:"長篠の戦い(1575年)じゃ。当時もっとも強いといわれた武田の騎馬隊が相手じゃった。わしは新しい武器「鉄砲」を多くそろえ、さく(柵)をならべて入れかわりながら撃ちつづけた。古いやり方の強い軍も、新しい道具と工夫の前にはやぶれる。いくさを変えた一戦よ。"
+  },
+  {
+    keys:["長島","ながしま","一向一揆","いっこういっき","越前一揆"],
+    a:"伊勢の長島や越前では、「一向一揆(いっこういっき)」とよばれる、仏の教えで結ばれた人々がわしに刃向かった。わしはこれをきびしく攻め、多くの命がうしなわれた。今も「むごい」と語られるできごとよ。信仰で団結した人々の力は、それほど強かったのじゃ。"
+  },
+  {
+    keys:["本願寺","ほんがんじ","石山","いしやま","お坊さん","宗教の戦い","十年"],
+    a:"わしがもっとも長く苦しんだ相手は、大坂の石山本願寺じゃ。仏の教えを信じる人々が各地で団結し、なんと10年あまりも争いつづけた。1580年、ようやく和議が成った。武士だけでなく、信仰で結ばれた人々の力も、それほど強かったということよ。"
+  },
+  {
+    keys:["上杉謙信","うえすぎ","けんしん","上杉と"],
+    a:"越後の上杉謙信(うえすぎけんしん)は、「軍神」とまでよばれた強い武将でな。はじめは手を結んでおったが、のちに敵対した。謙信もまた、わしが恐れた相手の一人よ。じゃが、その謙信も急に世を去り、わしへの大きな脅威は消えたのじゃ。"
+  },
+  {
+    keys:["武田滅","甲州","こうしゅう","武田氏ほろ","勝頼たおし","武田をほろ"],
+    a:"1582年、わしはついに、長年の強敵であった武田氏をほろぼした(甲州征伐)。あの強かった武田の家も、時の流れには勝てなんだ。これで東国の多くの大名がわしにしたがい、天下統一はもう目の前――そう思うておった矢先のことであった……。"
+  },
+  {
+    keys:["荒木村重","あらきむらしげ","松永久秀","まつながひさひで","謀反した家臣","裏切った家臣"],
+    a:"わしに仕えながら、そむいた家臣もおる。松永久秀(まつながひさひで)、荒木村重(あらきむらしげ)などじゃ。彼らはほかの敵と手を結び、わしに刃向かった。なぜ重い役をあたえた者が裏切るのか……人の心とは、まことにむずかしいものよ。"
+  },
+  // ===== 政策 =====
+  {
+    keys:["楽市","らくいち","楽座","らくざ","商売","しょうばい","市場","いちば","経済"],
+    a:"「楽市・楽座(らくいち・らくざ)」じゃ。むかしは特別な商人しか店を出せず、税も重かった。わしはそれをやめて、だれでも自由に商売できるようにした。すると町ににぎわいがもどり、人もお金も集まる。戦さの強さだけでなく、国を豊かにすることこそ大事なのよ。"
+  },
+  {
+    keys:["関所","せきしょ","通行","とおる","廃止","なくした"],
+    a:"むかしは道のあちこちに関所があって、通るたびに通行料をとられた。これでは人も荷物もとどこおる。わしは多くの関所をなくし、人やものが自由に行き来できるようにした。町と町がつながれば、商売も国もさかえる――そういう考えじゃ。"
+  },
+  {
+    keys:["堺","さかい","港町","みなとまち","商人","堺を"],
+    a:"堺(さかい)は、当時もっともさかえた商人の町でな。鉄砲づくりもさかんであった。わしはこの堺を手に入れ、お金や武器のもとをおさえた。豊かな町をおさえる者が、いくさにも強くなる。商売の力は、戦さの力に直につながるのじゃ。"
+  },
+  {
+    keys:["天皇","てんのう","朝廷","ちょうてい","官位","かんい","右大臣"],
+    a:"わしは天皇や朝廷を、敵にはせず、うまくつきあった。右大臣などの高い位ももらっておる。古い権威をたおすのではなく、利用しながら、自分の力をたしかなものにしていったのじゃ。力だけでなく、世の中の仕組みを使うのも、また知恵よ。"
+  },
+  {
+    keys:["検地","けんち","土地調べ","年貢","ねんぐ"],
+    a:"わしは手に入れた土地で、田畑の広さや実りを調べさせた(検地)。だれがどれだけの土地をもち、どれだけの年貢(ねんぐ)を出せるかをはっきりさせるためじゃ。これは、のちに秀吉が国じゅうで本格的に行う「太閤検地」のもとにもなった考えよ。"
+  },
+  // ===== 安土城 =====
+  {
+    keys:["安土","あづち","あずち","城","しろ","築城","いつ建て"],
+    a:"安土城(あづちじょう)は、1576年から琵琶湖のそばに建てはじめた、わしの新しい本拠地じゃ。交通の便のよい場所をえらんだ。城は守るためだけのものではない。わしの力と、新しい時代を世に見せるための、いわば「かんばん」でもあったのよ。"
+  },
+  {
+    keys:["天主","天守","てんしゅ","安土城すごい","どんな城","金"],
+    a:"安土城の天主(天守)は、地上六階・地下一階という、それはそれは高く大きなものよ。名高い絵師・狩野永徳(かのうえいとく)の絵や、金できらびやかにかざった。これほど豪華な天守は、それまでなかった。見る者みな、おどろいたものじゃ。"
+  },
+  {
+    keys:["ライトアップ","あかり","明かり","お盆","光の祭り","てらし","見せた"],
+    a:"わしは安土城をじまんにしてな、よその大名の使いや町の者にも見せてやった。お盆には城下のあかりを消させ、天主だけを提灯(ちょうちん)でてらし、琵琶湖の船にも松明(たいまつ)をともした。湖いちめんが光にゆれる――まるで光の祭りのようであったぞ。"
+  },
+  // ===== 趣味・人となり =====
+  {
+    keys:["性格","せいかく","どんな人","人がら","ひとがら","きびしい","せっかち"],
+    a:"わしか？　せっかちで、まっすぐで、新しいもの好き。古いしきたりにとらわれるのがきらいでな。「きびしい」「おそろしい」と言われることもあるが、いっぽうで世間の評判を気にかけ、家臣の意見にも耳をかたむけたという話も残っておる。人の見方は、一つではないのよ。"
+  },
+  {
+    keys:["残虐","ざんぎゃく","こわい","おそろしい","ひどいことした","ざんこく"],
+    a:"わしは敵に対しては、ときに容赦のないおこないもした。それは今も「むごい」と言われておる。じゃが当時は、ほかの武将も似たようなことをしておった。わしだけがとくべつ冷たかったのか、それとも時代がそうさせたのか――学者の間でも、意見は分かれておるのじゃ。"
+  },
+  {
+    keys:["見た目","みため","顔","かお","外見","背","せ","ひげ","声","どんな姿"],
+    a:"わしの姿か。宣教師フロイスによれば、背は中くらい、ほっそりとして、ひげは少なく、声はよく通ったという。酒はほとんど飲まず、食べる量も少なめ、朝は早う起きた。決めたことはためらわぬ――そんなふうに書き残されておる。"
+  },
+  {
+    keys:["好き","すき","このみ","趣味","しゅみ","何が好き"],
+    a:"好きなものか。舞(まい)の『敦盛(あつもり)』、茶の湯(ちゃのゆ)、鷹狩り(たかがり)、相撲(すもう)――どれも好んだ。それと、外国から来ためずらしい品々よ。新しいもの、変わったものに心おどるのが、わしという男じゃ。"
+  },
+  {
+    keys:["敦盛","あつもり","舞","まい","おどり","人間五十年"],
+    a:"わしは『敦盛(あつもり)』という舞をことのほか好んでな、「人間五十年……」とよく舞うたものよ。桶狭間へ出陣する前にも、これを舞ってから馬にまたがった。人の一生は短い。ならば、思うぞんぶん生きてみせる――そんな気持ちがこめられておるのじゃ。"
+  },
+  {
+    keys:["茶の湯","ちゃのゆ","茶道","茶わん","名物","めいぶつ","茶道具"],
+    a:"わしは茶の湯(ちゃのゆ)を好み、名のある茶道具を熱心に集めた(名物狩り)。ただ楽しむだけではない。手柄をたてた家臣に、その茶道具をほうびとしてあたえたのじゃ。名高い茶わん一つが、お金や土地にもまさるほまれになる――茶の湯を、ほうびにも使うたのよ。"
+  },
+  {
+    keys:["鷹狩り","たかがり","たか","鷹"],
+    a:"鷹狩り(たかがり)は、若いころからのわしの楽しみよ。鷹をはなって獲物をとらせる、勇ましくも風流な遊びじゃ。天下の政をあずかるようになっても、ひまを見つけてはよく行うた。各地の大名からも、めずらしい鷹がいくつも献上されたものじゃ。"
+  },
+  {
+    keys:["相撲","すもう","力士","すもうとり","相撲大会"],
+    a:"わしは相撲(すもう)を見るのが大好きでな、安土の城で大きな相撲大会をたびたび開いた。強い者にはほうびをあたえ、気に入った者は家来に取り立て、家までやったこともある。身分は関係ない、力と腕で身を立てられる――そういう世にしたかったのじゃ。"
+  },
+  {
+    keys:["蹴鞠","けまり","まり"],
+    a:"蹴鞠(けまり)――まりをけって落とさぬよう続ける、貴族の遊びにも、わしは関心をもった。今川氏真(うじざね)という者にたのんで、その腕前を見せてもらったこともある。武のことばかりでなく、こうした雅(みやび)な遊びにも目を向けるのが、わしの好奇心よ。"
+  },
+  {
+    keys:["左義長","さぎちょう","爆竹","ばくちく","祭り","まつり"],
+    a:"正月には「左義長(さぎちょう)」という祭りを、わしふうにど派手にやった。安土の町で爆竹を鳴らしながら、大ぜいで馬を走らせるのじゃ。にぎやかで、見たこともない趣向に、人々はおどろき、わいた。祭り一つにも、わしは新しさと派手やかさを求めたのよ。"
+  },
+  {
+    keys:["新しいもの","あたらしいもの","好奇心","こうきしん","変わったもの","めずらしいもの"],
+    a:"わしは、新しいもの・めずらしいものに目がない。鉄砲、南蛮の品、変わった祭り、見たことのない人や文化――なんでも知りたい、ためしたい。古いやり方にしがみつかず、よいと思えばどんどん取り入れる。その気性が、わしの一生をかたちづくったのじゃ。"
+  },
+  // ===== 南蛮・外国 =====
+  {
+    keys:["南蛮","なんばん","外国","がいこく","西洋","せいよう"],
+    a:"わしは外国から来た「南蛮(なんばん)」の文化が大すきでな。宣教師のはなしを聞き、めずらしい品々をながめ、外の世界に思いをはせた。新しいもの、知らぬものほどおもしろい。これからの世をつくるには、外の世界を知ることも大事なのじゃ。"
+  },
+  {
+    keys:["キリスト","宣教師","せんきょうし","フロイス","教会"],
+    a:"わしは、キリスト教の宣教師たちを受け入れ、その話に耳をかたむけた。とくにフロイスという宣教師は、わしのことを書き残してくれた。仏の教えと刃をまじえるいっぽうで、海のむこうの新しい教えには関心をもつ――わしとは、そういう男なのよ。"
+  },
+  {
+    keys:["地球儀","ちきゅうぎ","時計","とけい","西洋の品","ワイン","ぶどう酒"],
+    a:"宣教師たちは、地球儀(ちきゅうぎ)や時計(とけい)、ぶどう酒(ワイン)など、めずらしい西洋の品をもってきた。わしはこれらに大いに興味をもった。時計は「あつかいがむずかしかろう」と返したという話もあるがな。世界が丸いと知ったときのおどろき、そなたにもわかるか。"
+  },
+  {
+    keys:["弥助","やすけ","黒人","こくじん","アフリカ"],
+    a:"弥助(やすけ)か。宣教師がつれてきた、アフリカの出身の男よ。わしは初めて見るその姿に大いに興味をもち、ゆずり受けて「弥助」と名づけ、そば近くに仕えさせた。生まれや肌の色で人を分けへだてせず、よいと思えば取り立てる。それがわしのやり方じゃ。"
+  },
+  // ===== 家臣 =====
+  {
+    keys:["家臣","かしん","部下","ぶか","家来","けらい","重臣"],
+    a:"わしの家臣には、たのもしい者がそろっておった。柴田勝家、丹羽長秀、滝川一益、羽柴秀吉、明智光秀――みな一国をまかせられる将じゃ。家がらより、できる者を取り立てる。それがわしの軍が強かった理由の一つよ。"
+  },
+  {
+    keys:["秀吉","ひでよし","豊臣","とよとみ","草履","ぞうり","出世"],
+    a:"豊臣秀吉(とよとみひでよし)か。もとはわしの草履(ぞうり)を持つような身分の低い者じゃった。じゃが、はたらきがよく頭もまわる。家がらより、できる者を取り立てる――それがわしのやり方よ。秀吉はのちにわしの志をつぎ、天下を統一したのじゃ。"
+  },
+  {
+    keys:["光秀","みつひで","明智","あけち","どんな家臣の光秀"],
+    a:"明智光秀(あけちみつひで)は、学問もあり、いくさも政もこなす、たいへん有能な家臣じゃった。わしは光秀を深く信頼し、重い役をいくつもまかせた。その光秀が、まさかわしを討つとは……人を信じることのむずかしさを、わしは身をもって知ったのよ。"
+  },
+  {
+    keys:["柴田勝家","しばたかついえ","勝家","かついえ"],
+    a:"柴田勝家(しばたかついえ)は、わしの軍を支えた猛将じゃ。はじめは弟・信勝の側についたが、のちにわしに忠義をつくした。「かかれ柴田」「鬼柴田」とよばれるほどの勇者でな、北陸の守りをまかせた。たのもしき家臣であった。"
+  },
+  {
+    keys:["丹羽長秀","にわながひで","長秀"],
+    a:"丹羽長秀(にわながひで)は、戦さも築城も内政もこなす、なんでもできる家臣じゃ。安土城を建てる奉行もつとめた。「米五郎左(こめごろうざ)」――米のようになくてはならぬ男、とよばれたほど、わしはこの長秀をたよりにしておった。"
+  },
+  {
+    keys:["滝川一益","たきがわかずます","一益"],
+    a:"滝川一益(たきがわかずます)は、鉄砲のあつかいにすぐれ、各地の戦さで活躍した家臣じゃ。武田をほろぼしたあと、関東の守りをまかせた。手柄のほうびに名高い茶道具を望んだが、もらえなかった、という逸話も残っておるぞ。"
+  },
+  {
+    keys:["前田利家","まえだとしいえ","利家","としいえ"],
+    a:"前田利家(まえだとしいえ)は、若いころからわしに仕えた、槍の名手じゃ。気の荒いところもあったが、わしはそのまっすぐさを買うておった。利家はのちに加賀(いまの石川県あたり)を治める大大名となる。よき家臣であったのう。"
+  },
+  {
+    keys:["森蘭丸","もりらんまる","蘭丸","らんまる","小姓"],
+    a:"森蘭丸(もりらんまる)は、わしのそば近くに仕えた小姓(こしょう)じゃ。気がきいて、かしこく、わしの心をよく読んだ。本能寺のときも最後までわしのそばにあり、ともに命を散らした。若くしてけなげな、忘れられぬ者よ。"
+  },
+  {
+    keys:["佐久間信盛","さくまのぶもり","追放","ついほう","クビ","おいだし"],
+    a:"佐久間信盛(さくまのぶもり)は古くからの重臣じゃったが、はたらきが十分でないとして、わしは追放した。長年つくした者でも、役目を果たさねば容赦せぬ――そう見る者もいる。いっぽうで、わしなりの言い分や情けもあった、という見方もある。さて、どちらと思うか。"
+  },
+  {
+    keys:["家臣を大事","意見を聞","絶対服従","部下との関係","家臣のあつかい"],
+    a:"わしは家臣にきびしいと言われる。じゃが、よい意見ならば身分にかかわらず取り入れたし、家臣の扱いに気を配ったという記録も残っておる。「こわいだけの主君」だったのか、「人を見る主君」だったのか――それもまた、見方の分かれるところよ。"
+  },
+  {
+    keys:["信長の軍","強い軍","つよい","なぜ強い","軍隊","ぐんたい"],
+    a:"わしの軍が強かったわけはいくつかある。鉄砲などの新しい武器をいち早く取り入れたこと。商売で得た豊かなお金で兵をやとえたこと。そして、できる者を身分によらず取り立てたこと。新しさと豊かさと人の力――これがそろえば、軍は強くなるのじゃ。"
+  },
+  // ===== 宗教・信仰 =====
+  {
+    keys:["神","かみ","仏","ほとけ","信仰","しんこう","神社","じんじゃ","お参り"],
+    a:"わしは「神も仏も信じぬ無神論者だった」と言われることがある。じゃが実は、戦さの前には神社に勝利を祈り、熱田神宮や津島神社を手あつく支援しておった。古いしきたりやまよいごとはきらいじゃが、神仏をまったく信じなんだわけではないのよ。"
+  },
+  {
+    keys:["熱田神宮","あつた","津島神社","つしま","支援した神社"],
+    a:"熱田神宮(あつたじんぐう)や津島神社(つしまじんじゃ)は、わが織田家とゆかりの深い神社でな。わしは手あつく支援した。桶狭間の戦いの勝利を熱田神宮に感謝して塀をおさめた、という言い伝えもある。神仏をうやまう心は、わしにもあったのじゃ。"
+  },
+  // ===== 本能寺 =====
+  {
+    keys:["最後の戦い","さいごの戦い","本能寺の直前","中国攻め","毛利","なぜ本能寺に"],
+    a:"あのとき、わしは中国地方の毛利氏と戦う秀吉を助けに行くところであった。その途中、わずかな手勢だけをつれて京都の本能寺に泊まっておった。まさか味方の光秀が攻めてくるとは思いもよらず……不意をつかれたのじゃ。"
+  },
+  {
+    keys:["本能寺","ほんのうじ","明智の謀反","最期","さいご","討たれ","裏切","うらぎり","謀反","むほん"],
+    a:"本能寺の変(1582年6月)……わしの最期じゃな。天下統一まであと一歩というとき、信頼していた家臣の明智光秀がそむき、本能寺をおそった。わしは弓や槍をとって戦うたが、多勢に無勢。みずから火を放ち、炎の中で生がいを終えた。志なかばであった。"
+  },
+  {
+    keys:["是非に及ばず","ぜひにおよばず","最後の言葉","さいごの言葉","名言"],
+    a:"本能寺で、明智の謀反と知ったわしは「是非に及ばず(ぜひにおよばず)」と言うたと伝わる。「あれこれ言うてもしかたない、もはやこれまで」――そんな意味よ。じたばたせず、運命を受け入れる。武将としての、わしの覚悟がこもった言葉じゃ。"
+  },
+  {
+    keys:["何歳","なんさい","いくつ","年齢","ねんれい","享年","きょうねん","何才","死んだとき","死んだの","死んだ","亡くなった","何歳で死","いくつで死"],
+    a:"わしが世を去ったのは1582年、本能寺でのことじゃ。生まれが1534年ゆえ、享年(きょうねん)は数えで49。今の数え方でいえば48歳であった。「人間五十年」とよく舞うておったが、まさにその五十に、あと少しというところであったな。"
+  },
+  {
+    keys:["なぜ裏切","どうして裏切","なぜ光秀","どうして光秀","裏切った理由","謀反の理由","本能寺なぜ"],
+    a:"なぜ光秀がわしを討ったか――じつは今もって、はっきりとは分かっておらぬ。うらみがあったとも、野心からとも、ほかの者にそそのかされたとも、いろいろに言われておる。歴史最大のなぞの一つよ。答えが一つに決まらぬからこそ、後の世の人が考えつづけておる。そなたも考えてみよ。"
+  },
+  {
+    keys:["光秀の最期","明智の最期","山崎","やまざき","三日天下","光秀どうなった","光秀その後"],
+    a:"わしを討った明智光秀じゃが、その天下は長くは続かなんだ。報せを聞いた羽柴秀吉が、中国地方から大いそぎでもどり、山崎の戦い(1582年)で光秀を破ったのじゃ。光秀は逃げる途中で命を落とした。わしを討ってから、わずか十日あまり――世に「三日天下」とよばれる。"
+  },
+  {
+    keys:["遺体","いたい","お墓","おはか","墓","葬式","そうしき","葬儀","どこに眠"],
+    a:"本能寺で焼けたため、わしのなきがらは、ついに見つからなかったといわれておる。死から数か月後、羽柴秀吉が京都の大徳寺で、それはそれは盛大な葬儀を行うてくれた。今でも各地に、わしをまつる寺や神社があるぞ。なきがらは見つからずとも、わしは語りつがれておる。"
+  },
+  // ===== 評価・後世 =====
+  {
+    keys:["三英傑","さんえいけつ","信長秀吉家康","三人","つづき"],
+    a:"わし(信長)、羽柴秀吉、徳川家康――この三人は「三英傑(さんえいけつ)」とよばれる。わしが世を一つにまとめる道を切りひらき、秀吉がそれをなしとげ、家康が長くつづく世(江戸幕府)をつくった。三人で、戦国の世を終わらせたとも言えるのよ。"
+  },
+  {
+    keys:["秀吉と家康","ホトトギス","鳴かぬなら","ちがい","くらべ"],
+    a:"後の世では、わしと秀吉と家康のちがいを、ホトトギスにたとえた歌がある。鳴かぬなら、わしは「殺してしまえ」、秀吉は「鳴かせてみせよう」、家康は「鳴くまで待とう」――とな。あくまで後の人の作り話じゃが、三人の気性のちがいを、うまく言いあてておるのう。"
+  },
+  {
+    keys:["評価","ひょうか","すごい","えらい","なぜ有名","革新","かくしん","のちの世"],
+    a:"わしのおこないは、古いしきたりを変え新しい時代をひらいた――そう長くたたえられてきた。じゃが近ごろの学者は「思ったほど新しくはなかったのでは」と見直しもしておる。歴史とは、後の世の人がくり返し調べ、考え直すもの。一つの答えにとらわれず、自分で考えてみよ。"
+  },
+  {
+    keys:["神様","かみさま","まつられ","建勲","けんくん","神社にまつ"],
+    a:"わしは死後、明治の世になって「神」としてまつられた。京都などにある建勲神社(けんくんじんじゃ)が、わしをまつる神社じゃ。一人の武将が、時代によって悪人とされたり、英雄とされたり、神とされたり――人の評価とは、まことに移ろいやすいものよのう。"
+  },
+  {
+    keys:["信長公記","しんちょうこうき","伝記","記録","本"],
+    a:"わしのことをくわしく伝える書物に『信長公記(しんちょうこうき)』がある。家臣の太田牛一(おおたぎゅういち)が書き残したものでな、わしの一生を知る、たいへん大切な記録じゃ。今そなたが学ぶわしの話の多くも、もとをたどればこうした記録に行きつくのよ。"
+  },
+  {
+    keys:["肖像画","しょうぞうが","絵","え","どんな絵"],
+    a:"わしをえがいた肖像画(しょうぞうが)は、今も二十枚あまり残っておる。とくに有名なのは、わしの一周忌に描かれたものよ。中には、もとは派手なよそおいに描かれていたのを、あとから地味に描き直したものもあるという。絵にも、いろいろな物語がかくれておるのじゃ。"
+  },
+  // ===== その他・補足 =====
+  {
+    keys:["信長の名言","名言","めいげん","ことば","座右"],
+    a:"わしの言葉として伝わるものに「是非に及ばず」や、舞の「人間五十年」がある。短い一生をおそれず、思うままに生きる――そんな気概がにじんでおろう。もっとも、その多くは後の世の人が伝えたもの。本当にそう言うたかは、たしかめようがないのじゃがな。"
+  },
+  {
+    keys:["どこの人","出身","しゅっしん","愛知","あいち","尾張のどこ"],
+    a:"わしは尾張国(おわりのくに)、いまの愛知県の出身じゃ。生まれは勝幡城という説が有力よ。のちに清洲、小牧山、岐阜、そして安土と、本拠地をうつしていった。勢いがのびるにつれ、わしの居どころも東から西へとうつっていったのじゃ。"
+  },
+  {
+    keys:["どんな時代","戦国時代","せんごく","時代","じだい","いつの人"],
+    a:"わしが生きたのは「戦国時代」――各地の武将が領地をうばいあう、戦さの絶えぬ世じゃ。室町幕府の力はおとろえ、強い者がのし上がる時代であった。そんな乱れた世を一つにまとめようとしたのが、このわしよ。およそ500年近く前のことじゃな。"
+  },
+  {
+    keys:["うつけと言われた理由","なぜうつけ","どうしてうつけ"],
+    a:"なぜ「うつけ(ばか者)」と言われたか。わしが、人とちがう変わったかっこうをし、行儀作法を気にせずふるまったからよ。じゃが、それはしきたりにとらわれぬわしの気性のあらわれ。義父・斎藤道三は、会うてみてわしの本当の力を見ぬいた、と伝わっておる。"
+  },
+  {
+    keys:["失敗","しっぱい","負けた戦","負け","まけ","ピンチ"],
+    a:"わしとて、いくさにすべて勝ったわけではない。三方ヶ原では武田信玄に大敗し、金ヶ崎では命からがら逃げた。一向一揆や本願寺には、長く苦しめられた。負けや危機をのりこえ、学びながら進む――それが、わしの一生であったのよ。"
+  },
+  {
+    keys:["跡継ぎ問題","信長のあと","死後","しご","織田家その後","織田家どうなった"],
+    a:"わしが本能寺でたおれたあと、織田家の力はおとろえていった。家臣の秀吉が力をのばし、やがて天下をにぎる。わしの子や孫も大名として残りはしたが、天下人とはならなんだ。築いたものを子に残しきれぬ――それもまた、世のならいよ。"
+  },
+  {
+    keys:["子孫","しそん","今の子孫","末裔","まつえい","続いてる"],
+    a:"わしの血すじは、今の世にも続いておるぞ。子孫の中には、よく知られた人物もおるという。500年近くたっても、わしの名と血が語りつがれておる――武将として、これにまさるよろこびはないのう。"
+  },
+  {
+    keys:["うまれ変わったら","もし生きてたら","天下とれた","統一できた","あと少し"],
+    a:"もし本能寺がなければ、わしは天下を一つにまとめられたか――そう問う者は多い。武田をほろぼし、敵は本願寺くらいとなり、まさにあと一歩であった。じゃが歴史に「もし」はない。わしのまいた種を、秀吉と家康が実らせた。それでよいではないか。"
+  },
+  {
+    keys:["教訓","きょうくん","学ぶ","まなぶ","信長から","どう生きる"],
+    a:"わしから何を学ぶか、か。古いやり方にしがみつかず、新しいものを取り入れること。身分でなく力で人を見ること。そして、思いきって決め、おそれず進むこと。じゃが同時に、力にたよりすぎれば人はついてこぬ、ということもな。よいところも、あやまちも、両方学ぶがよい。"
+  },
+  {
+    keys:["好きな食べ物","食べ物","たべもの","食事","しょくじ","何を食べ"],
+    a:"食べ物の好みか。わしは食べる量は少なめで、ぜいたくな食事を好まなんだ、と伝わる。若いころは、町を歩きながら栗や柿、瓜などをかじっておったというぞ。意外にも、しっそな口であったのじゃ。"
+  },
+  {
+    keys:["お酒","おさけ","酒","さけ","飲んだ"],
+    a:"わしは、酒はほとんど飲まなんだ。宣教師フロイスも「信長は酒を飲まず」と書き残しておる。戦さや政に明けくれる身。常に頭をすっきりとさせておきたかったのかもしれぬな。"
+  },
+  {
+    keys:["身長","しんちょう","背の高さ","せのたかさ","大きさ"],
+    a:"わしの背丈は「中くらい」であったと、宣教師フロイスは記しておる。とりたてて大きくはなかったらしい。体はほっそりとしていたともいう。大きな体でなくとも、世を動かすことはできる――そういうことよ。"
+  },
+  {
+    keys:["旗","はた","旗印","はたじるし","永楽銭","えいらくせん","のぼり"],
+    a:"わしの旗印(はたじるし)には「永楽銭(えいらくせん)」――銭(ぜに)の形をえがいたものを用いた。お金は商売と力のもと。豊かさをたいせつにするわしらしい印じゃろう。戦場でこの旗がひるがえれば、それが織田の軍じゃ。"
+  },
+  {
+    keys:["馬","うま","乗馬","じょうば","馬術","ばじゅつ","名馬","めいば"],
+    a:"わしは馬が大すきでな、若いころから馬術の鍛錬を欠かさなんだ。各地の大名からも、すぐれた名馬がいくつも献上された。安土や岐阜の城下には馬場をつくり、馬をならべて見せる「馬揃え(うまぞろえ)」という一大行事も行うた。馬は武将の力の象徴よ。"
+  }
+];
+
+// 入力にいちばん合う答えをさがす
+function findAnswer(text){
+  const t = (text||"").replace(/\s/g,"");
+  if(!t) return null;
+  let best=null, bestScore=0;
+  for(const item of KB){
+    let score=0;
+    for(const k of item.keys){ if(t.includes(k)) score += k.length; }
+    if(score>bestScore){bestScore=score; best=item;}
+  }
+  return bestScore>0 ? best.a : null;
+}
+
+const NOT_FOUND = [
+  "ふむ、それはわしにもよう分からぬ問いじゃ。言葉を変えて、もう一度きいてみよ。たとえば『桶狭間』『鉄砲』『本能寺』『天下統一』などはどうじゃ？",
+  "むむ、それについては答えを持ちあわせておらぬ。べつの言い方で、もう一度たずねてみよ。",
+  "はて、聞きおぼえのない問いじゃのう。『楽市楽座』や『安土城』のことなら、いくらでも語ってやれるぞ。"
+];
+
+const GREET = "やあ、わしが織田信長じゃ！　戦国の世を生きた武将よ。聞きたいことを下のますに入力して、リターンを押すか「きく」ボタンを押すがよい。なんでも答えてやろうぞ！";
+
+// ===== タイプライター表示 =====
+const answerEl = document.getElementById('answer');
+const faceEl = document.getElementById('face');
+let typing=null;
+function speak(text, mood){
+  faceEl.classList.remove('talk','seikai','zannen'); void faceEl.offsetWidth;
+  faceEl.classList.add(mood || 'talk');
+  if(typing) clearInterval(typing);
+  answerEl.innerHTML="";
+  let i=0;
+  const cursor=document.createElement('span');
+  cursor.className='cursor'; cursor.textContent='　';
+  answerEl.appendChild(cursor);
+  typing=setInterval(()=>{
+    if(i>=text.length){clearInterval(typing); cursor.remove(); return;}
+    const ch=document.createTextNode(text[i]);
+    answerEl.insertBefore(ch,cursor);
+    i++;
+  },32);
+}
+
+function handleAsk(text){
+  const a = findAnswer(text);
+  if(a){ speak(a); }
+  else{ speak(NOT_FOUND[Math.floor(Math.random()*NOT_FOUND.length)]); }
+}
+
+// ===== 入力イベント =====
+const qEl=document.getElementById('q');
+
+// IME（日本語入力）の変換確定中かどうかを記録する
+let composing=false;
+qEl.addEventListener('compositionstart',()=>{ composing=true; });
+qEl.addEventListener('compositionend',()=>{ composing=false; });
+
+document.getElementById('askBtn').onclick=()=>handleAsk(qEl.value);
+qEl.addEventListener('keydown',e=>{
+  // 漢字変換などの確定リターンでは送信しない。
+  // 変換が確定し、ふつうにリターンを押したときだけ質問を送る。
+  if(e.key==='Enter' && !composing && !e.isComposing){
+    handleAsk(qEl.value);
+  }
+});
+
+// ===== 信長クイズ =====
+const QUIZ = [
+  {q:"桶狭間（おけはざま）の戦いで、信長がやぶった大軍のかしらはだれ？",
+   c:["今川義元","武田信玄","上杉謙信"],ans:0,
+   e:"そのとおり、今川義元じゃ！　わしの何倍もの大軍をひきいてせめてきたが、油断した本陣をついて討ち取った。数より、すばやさと作戦よ。"},
+  {q:"長篠（ながしの）の戦いで、信長が多くそろえた新しい武器は？",
+   c:["鉄砲","弓","大砲"],ans:0,
+   e:"うむ、鉄砲じゃ！　さくをならべ、入れかわりながら撃ちつづけ、強い武田の騎馬隊をやぶった。新しい道具と工夫で、いくさのやり方を変えたのよ。"},
+  {q:"信長が天下統一の道なかばでたおれた事件は？",
+   c:["本能寺の変","山崎の戦い","姉川の戦い"],ans:0,
+   e:"さよう、本能寺の変じゃ。あと一歩というところで、信じておった家臣にそむかれての。志なかばであった……。"},
+  {q:"本能寺で信長を裏切った家臣はだれ？",
+   c:["明智光秀","羽柴秀吉","柴田勝家"],ans:0,
+   e:"……明智光秀じゃ。なぜ光秀がそむいたのか、その答えは今もはっきりとはわかっておらぬ。歴史の大きななぞの一つよ。"},
+  {q:"信長が「だれでも自由に商売できる」ようにした政策は？",
+   c:["楽市・楽座","刀狩","関所づくり"],ans:0,
+   e:"楽市・楽座（らくいち・らくざ）じゃ！　特別な商人だけの仕組みをやめ、税も軽くした。町ににぎわいがもどり、国が豊かになったのよ。"},
+  {q:"信長が琵琶湖（びわこ）のそばに建てた、ごうかな本拠地の城は？",
+   c:["安土城","大阪城","江戸城"],ans:0,
+   e:"安土城（あづちじょう）じゃ！　天主は地上六階・地下一階、金できらびやかにかざった。わしの力と新しい時代を世に見せる「かんばん」であった。"},
+  {q:"信長が稲葉山城を手に入れたあと、その町につけた名は？",
+   c:["岐阜","京都","堺"],ans:0,
+   e:"岐阜（ぎふ）じゃ！　あらたな本拠地とし、このころから「天下布武」の印を使いはじめた。いよいよ天下への歩みよ。"},
+  {q:"信長が使った印（はんこ）にあった、四文字の言葉は？",
+   c:["天下布武","風林火山","一所懸命"],ans:0,
+   e:"天下布武（てんかふぶ）じゃ！　武の力で争いをおさめ、世を一つにまとめる――その願いをこめた言葉よ。"},
+  {q:"信長が生まれたのは、いまの何県あたり？",
+   c:["愛知県","岐阜県","京都府"],ans:0,
+   e:"愛知県――むかしの尾張国（おわりのくに）じゃ。生まれは勝幡城（しょばたじょう）という説が有力よ。"},
+  {q:"信長が出陣の前にも好んで舞った、「人間五十年……」の舞は？",
+   c:["敦盛","能","歌舞伎"],ans:0,
+   e:"敦盛（あつもり）じゃ！　桶狭間へ出る前にもこれを舞った。人の一生は短い。ならば思うぞんぶん生きてみせる――そんな舞よ。"},
+  {q:"信長の妹で、北近江の浅井長政に嫁いだのはだれ？",
+   c:["お市","濃姫","茶々"],ans:0,
+   e:"わが妹、お市（おいち）じゃ。家どうしのつながりのため嫁がせたが、長政が敵となり、敵味方に分かれてしもうた。せつない話よ。"},
+  {q:"本能寺のあと、明智光秀をやぶって天下をついだのはだれ？",
+   c:["羽柴秀吉","徳川家康","柴田勝家"],ans:0,
+   e:"羽柴秀吉（のちの豊臣秀吉）じゃ。山崎の戦いでわずか十日あまりで光秀をやぶった。世に「三日天下」とよばれるのう。"},
+  {q:"信長の旗印（はたじるし）にえがかれていたものは？",
+   c:["永楽銭（お金）","太陽","龍"],ans:0,
+   e:"永楽銭（えいらくせん）――銭（ぜに）の形じゃ！　お金は商売と力のもと。豊かさをたいせつにするわしらしい印じゃろう。"},
+  {q:"信長が世を去ったのは、何さいごろ？（数えで）",
+   c:["49さい","70さい","30さい"],ans:0,
+   e:"数えで49、いまの数え方では48であった。「人間五十年」と舞うておったが、その五十に、あと少しというところよ。"},
+  {q:"桶狭間で、少ない兵の信長が勝てた一番の理由は？",
+   c:["油断した相手の本陣をすばやくついた","兵の数が多かった","城にこもって守った"],ans:0,
+   e:"そのとおり！　勝ちを思いこんで油断した今川の本陣だけをねらい、いっきにせめこんだ。相手の心のすきをつくのが兵法よ。"},
+  {q:"信長のあと、江戸幕府をひらいて長く天下をおさめたのはだれ？",
+   c:["徳川家康","豊臣秀吉","明智光秀"],ans:0,
+   e:"徳川家康じゃ。桶狭間のあとわしと手を結んだ、がまん強い男よ。わしのまいた種を、秀吉と家康が実らせたのじゃ。"}
+];
+const MARKS=["一","二","三"];
+
+let quizState={order:[],pos:0,right:0,done:0,finished:false};
+const choicesEl=document.getElementById('choices');
+const quizNextEl=document.getElementById('quizNext');
+const quizCountEl=document.getElementById('quizCount');
+const quizRightEl=document.getElementById('quizRight');
+const quizDoneEl=document.getElementById('quizDone');
+
+function shuffle(n){const a=[...Array(n).keys()];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function startQuiz(){
+  quizState={order:shuffle(QUIZ.length),pos:0,right:0,done:0,finished:false};
+  updateScore();
+  showQuestion();
+}
+function updateScore(){quizRightEl.textContent=quizState.right;quizDoneEl.textContent=quizState.done;}
+
+function showQuestion(){
+  const item=QUIZ[quizState.order[quizState.pos]];
+  quizCountEl.textContent="第"+(quizState.pos+1)+"問 ／ 全"+QUIZ.length+"問";
+  speak("【もんだい】"+item.q);
+  choicesEl.innerHTML="";
+  const disp=shuffle(item.c.length); // 選択肢の表示順（中身もシャッフル）
+  disp.forEach((origIdx,k)=>{
+    const b=document.createElement('button');
+    b.className='choice';
+    b.innerHTML='<span class="mark">'+MARKS[k]+'</span>'+item.c[origIdx];
+    b.dataset.correct=(origIdx===item.ans)?"1":"0";
+    b.onclick=()=>chooseAnswer(b,item);
+    choicesEl.appendChild(b);
+  });
+  quizNextEl.classList.remove('show');
+}
+
+function chooseAnswer(clicked,item){
+  const isRight=clicked.dataset.correct==="1";
+  choicesEl.querySelectorAll('.choice').forEach(b=>{
+    b.disabled=true;
+    if(b.dataset.correct==="1"){b.classList.add('correct');b.querySelector('.mark').textContent='○';}
+    else if(b===clicked){b.classList.add('wrong');b.querySelector('.mark').textContent='✕';}
+  });
+  quizState.done++;
+  if(isRight){quizState.right++;speak("あっぱれ！　"+item.e,'seikai');}
+  else{speak("むむ、ざんねん。正しくは「"+item.c[item.ans]+"」じゃ。"+item.e,'zannen');}
+  updateScore();
+  if(quizState.pos>=quizState.order.length-1){
+    quizState.finished=true;
+    quizNextEl.textContent="けっか発表 ▶";
+  }else{
+    quizNextEl.textContent="つぎの問題へ ▶";
+  }
+  quizNextEl.classList.add('show');
+}
+
+quizNextEl.onclick=()=>{
+  if(quizState.finished){
+    const r=quizState.right,n=QUIZ.length;
+    let msg;
+    if(r===n) msg="天下無双じゃ！　全問正解、みごとであった！";
+    else if(r>=n*0.7) msg="あっぱれ、なかなかの戦国通じゃな！";
+    else if(r>=n*0.4) msg="うむ、よう学んだ。あと一息よ。";
+    else msg="これからじゃ。もう一度いどんでみよ！";
+    speak("【けっか】全"+n+"問のうち、"+r+"問せいかい！　"+msg,'seikai');
+    choicesEl.innerHTML="";
+    quizNextEl.textContent="もう一度いどむ ▶";
+    quizState.finished=false;
+    quizState.restart=true;
+    return;
+  }
+  if(quizState.restart){quizState.restart=false;startQuiz();return;}
+  quizState.pos++;
+  showQuestion();
+};
+
+// ===== 年表 =====
+const TIMELINE=[
+  {y:"1534年",age:"0さい",t:"誕生",d:"わしは1534年、尾張国（いまの愛知県）に生まれた。勝幡城（しょばたじょう）という説が有力じゃ。織田家のあとつぎとして世に生をうけたのよ。"},
+  {y:"1546年",age:"12さいごろ",t:"元服（げんぷく）",d:"大人の仲間入りをする元服をすませ、「織田三郎信長」と名のった。子どものころの名「吉法師」ともお別れじゃ。"},
+  {y:"1560年",age:"26さいごろ",t:"桶狭間の戦い",d:"今川義元の大軍を、すばやい作戦でやぶった。だれもがわしの負けと思うた一戦よ。『敦盛』を舞ってから出陣したのじゃ。"},
+  {y:"1567年",age:"33さいごろ",t:"美濃をとり「岐阜」と命名",d:"美濃の斎藤氏をやぶり、稲葉山城を手に入れた。町を「岐阜」と名づけ、このころから「天下布武」の印を使いはじめたのよ。"},
+  {y:"1568年",age:"34さいごろ",t:"京へのぼる（上洛）",d:"足利義昭をたすけて京都へのぼり、将軍の座につけた。いよいよ天下の中心、京で力をふるいはじめたのじゃ。"},
+  {y:"1570年",age:"36さいごろ",t:"姉川の戦い",d:"敵対した朝倉氏・浅井氏を、徳川家康とともにやぶった。妹お市の嫁ぎ先・浅井長政が相手という、つらいいくさであった。"},
+  {y:"1571年",age:"37さいごろ",t:"比叡山の焼き討ち",d:"わしに刃向かった比叡山を焼いた。多くの命がうしなわれ、今も「むごい」と語られる。強さの裏の、悲しいできごとよ。"},
+  {y:"1573年",age:"39さいごろ",t:"室町幕府がおわる",d:"わしに敵対した将軍・足利義昭を京から追い出した。長くつづいた室町幕府は、事実上ここでおわったと言われておる。"},
+  {y:"1575年",age:"41さいごろ",t:"長篠の戦い",d:"鉄砲を多くそろえ、さくをならべて、強い武田の騎馬隊をやぶった。新しい道具と工夫が、いくさを変えた一戦じゃ。"},
+  {y:"1576年",age:"42さいごろ",t:"安土城を建てはじめる",d:"琵琶湖のそばに、安土城を建てはじめた。高くごうかな天主は、わしの力と新しい時代を世に見せる「かんばん」よ。"},
+  {y:"1582年 3月",age:"48さいごろ",t:"武田氏をほろぼす",d:"長年の強敵・武田氏をついにほろぼした。東国の多くの大名がしたがい、天下統一はもう目の前――そう思うておった矢先のことであった。"},
+  {y:"1582年 6月",age:"48さい",t:"本能寺の変",d:"家臣の明智光秀にそむかれ、本能寺をおそわれた。わしも戦うたが多勢に無勢。みずから火を放ち、炎の中で生がいを終えた。志なかばであった……。"}
+];
+const timelineEl=document.getElementById('timeline');
+function renderTimeline(){
+  timelineEl.innerHTML="";
+  TIMELINE.forEach((ev,idx)=>{
+    const d=document.createElement('div');
+    d.className='tl-item';
+    d.innerHTML='<div class="tl-year">'+ev.y+'</div><div class="tl-age">'+ev.age+'</div><div class="tl-title">'+ev.t+'</div>';
+    d.onclick=()=>{
+      timelineEl.querySelectorAll('.tl-item').forEach(x=>x.classList.remove('active'));
+      d.classList.add('active');
+      speak("【"+ev.y+"・"+ev.t+"】"+ev.d);
+    };
+    timelineEl.appendChild(d);
+  });
+}
+renderTimeline();
+
+// ===== モード切り替え =====
+const QA_INTRO="もんどうの間じゃ。下のますに聞きたいことを入力して、わしにたずねるがよい。";
+const QUIZ_INTRO="では、信長クイズじゃ！　下の三つから、正しいと思うものをえらぶがよい。みなで考えてみよ！";
+const TL_INTRO="これがわしの一生の年表じゃ。下の札をタップすれば、そのできごとをわしが語って聞かせよう。";
+const panels={qa:document.getElementById('panel-qa'),quiz:document.getElementById('panel-quiz'),timeline:document.getElementById('panel-timeline')};
+let curMode='qa';
+function setMode(mode){
+  if(mode===curMode && mode!=='quiz') return;
+  curMode=mode;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  Object.keys(panels).forEach(k=>panels[k].classList.toggle('show',k===mode));
+  if(mode==='qa'){speak(QA_INTRO);}
+  else if(mode==='quiz'){speak(QUIZ_INTRO);setTimeout(()=>{if(curMode==='quiz')startQuiz();},1600);}
+  else if(mode==='timeline'){speak(TL_INTRO);}
+}
+document.querySelectorAll('.mode-btn').forEach(b=>{
+  b.onclick=()=>setMode(b.dataset.mode);
+});
+
+// 最初のあいさつ
+speak(GREET);
+</script>
+</body>
+</html>
