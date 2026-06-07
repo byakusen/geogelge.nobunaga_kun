@@ -835,13 +835,9 @@ function speak(text, mood){
   if(typing) clearInterval(typing);
   answerEl.innerHTML="";
   let i=0;
-  const cursor=document.createElement('span');
-  cursor.className='cursor'; cursor.textContent='　';
-  answerEl.appendChild(cursor);
   typing=setInterval(()=>{
-    if(i>=text.length){clearInterval(typing); cursor.remove(); stopMouth(); return;}
-    const ch=document.createTextNode(text[i]);
-    answerEl.insertBefore(ch,cursor);
+    if(i>=text.length){clearInterval(typing); stopMouth(); return;}
+    answerEl.appendChild(document.createTextNode(text[i]));
     i++;
   },32);
 }
